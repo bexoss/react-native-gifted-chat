@@ -1,10 +1,10 @@
 import React from 'react';
 import {
-  Text,
-  Clipboard,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
+    Text,
+    Clipboard,
+    StyleSheet,
+    TouchableWithoutFeedback,
+    View,
 } from 'react-native';
 
 import MessageText from './MessageText';
@@ -58,17 +58,17 @@ export default class Bubble extends React.Component {
   renderTicks() {
     const {currentMessage} = this.props;
     if (this.props.renderTicks) {
-        return this.props.renderTicks(currentMessage);
+      return this.props.renderTicks(currentMessage);
     }
     if (currentMessage.user._id !== this.props.user._id) {
-        return;
+      return;
     }
     if (currentMessage.sent || currentMessage.received) {
       return (
-        <View style={styles.tickView}>
-          {currentMessage.sent && <Text style={[styles.tick, this.props.tickStyle]}>✓</Text>}
-          {currentMessage.received && <Text style={[styles.tick, this.props.tickStyle]}>✓</Text>}
-        </View>
+          <View style={styles.tickView}>
+            {currentMessage.sent && <Text style={[styles.tick, this.props.tickStyle]}>✓</Text>}
+            {currentMessage.received && <Text style={[styles.tick, this.props.tickStyle]}>✓</Text>}
+          </View>
       )
     }
   }
@@ -102,41 +102,56 @@ export default class Bubble extends React.Component {
         ];
         const cancelButtonIndex = options.length - 1;
         this.context.actionSheet().showActionSheetWithOptions({
-          options,
-          cancelButtonIndex,
-        },
-        (buttonIndex) => {
-          switch (buttonIndex) {
-            case 0:
-              Clipboard.setString(this.props.currentMessage.text);
-              break;
-          }
-        });
+              options,
+              cancelButtonIndex,
+            },
+            (buttonIndex) => {
+              switch (buttonIndex) {
+                case 0:
+                  Clipboard.setString(this.props.currentMessage.text);
+                  break;
+              }
+            });
       }
     }
   }
 
   render() {
+
+    let username = null;
+    if(this.props.showUsername &&
+        (!isSameUser(this.props.currentMessage, this.props.previousMessage) ||
+        !isSameDay(this.props.currentMessage, this.props.previousMessage)) &&
+        (this.props.currentMessage.user._id !== this.props.user._id)
+    ){
+      username = (
+          <View style={this.props.usernameContainerStyle}>
+            <Text style={this.props.usernameStyle}>{this.props.currentMessage.user.name}</Text>
+          </View>
+      )
+    }
+
     return (
-      <View style={[styles[this.props.position].container, this.props.containerStyle[this.props.position]]}>
-        <View style={[styles[this.props.position].wrapper, this.props.wrapperStyle[this.props.position], this.handleBubbleToNext(), this.handleBubbleToPrevious()]}>
-          <TouchableWithoutFeedback
-            onLongPress={this.onLongPress}
-            accessibilityTraits="text"
-            {...this.props.touchableProps}
-          >
-            <View>
-              {this.renderCustomView()}
-              {this.renderMessageImage()}
-              {this.renderMessageText()}
-              <View style={[styles.bottom, this.props.bottomContainerStyle[this.props.position]]}>
-                {this.renderTime()}
-                {this.renderTicks()}
+        <View style={[styles[this.props.position].container, this.props.containerStyle[this.props.position]]}>
+          {username}
+          <View style={[styles[this.props.position].wrapper, this.props.wrapperStyle[this.props.position], this.handleBubbleToNext(), this.handleBubbleToPrevious()]}>
+            <TouchableWithoutFeedback
+                onLongPress={this.onLongPress}
+                accessibilityTraits="text"
+                {...this.props.touchableProps}
+            >
+              <View>
+                {this.renderCustomView()}
+                {this.renderMessageImage()}
+                {this.renderMessageText()}
+                <View style={[styles.bottom, this.props.bottomContainerStyle[this.props.position]]}>
+                  {this.renderTime()}
+                  {this.renderTicks()}
+                </View>
               </View>
-            </View>
-          </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback>
+          </View>
         </View>
-      </View>
     );
   }
 }
