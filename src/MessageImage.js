@@ -6,7 +6,7 @@ import {
   Dimensions,
 } from 'react-native';
 import Lightbox from 'react-native-lightbox';
-
+import FastImage from 'react-native-fast-image';
 
 export default class MessageImage extends React.Component {
   render() {
@@ -20,7 +20,7 @@ export default class MessageImage extends React.Component {
           }}
           {...this.props.lightboxProps}
         >
-          <Image
+          <FastImage
             {...this.props.imageProps}
             style={[styles.image, this.props.imageStyle]}
             source={{uri: this.props.currentMessage.image}}
